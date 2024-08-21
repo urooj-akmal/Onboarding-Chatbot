@@ -28,7 +28,7 @@ This guide walks you through setting up and running the onboarding chatbot utili
 
 **Download Links:**
 
-- [https://github.com/ollama/ollama](https://github.com/ollama/ollama)
+- https://ollama.com/download
 
 **Installation Instructions:**
 
