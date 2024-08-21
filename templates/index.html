@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Chatbot for onboarding at Lucky Core Industries Soda Ash Business. Explore company details, internal directory, and community navigation.">
+    <title>LCI Chatbot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+</head>
+
+<body>
+    <header>
+        <div class="header-content" role="banner">
+            <div class="bot-image" id="back-button">
+                <img src="{{ url_for('static', filename='bot.png') }}" alt="Onboarding Bot">
+            </div>
+            <div class="header-text">
+                <div class="chat-with" aria-label="Chat with your onboarding buddy">Chat with your</div>
+                <div class="onboarding-buddy" aria-label="Onboarding Buddy">Onboarding Buddy</div>
+            </div>
+            <div class="menu">
+                <button class="menu-button" aria-label="Menu">&#8942;</button> <!-- 3-dot icon -->
+                <div class="dropdown-content">
+                    <a href="#home">Home</a>
+                    <a href="#timetable">Time Table</a>
+                    <a href="#emergency-contact">Emergency Contact</a>
+                </div>
+            </div>
+        </div>
+    </header>   
+
+    <main>
+        <div id="home-view" class="home-view">
+            <div class="welcome-message">
+                <h1 tabindex="0">Welcome to Lucky Core Industries Soda Ash Business!</h1>
+                <p id="welcome-text" tabindex="0">We're thrilled to have you join our team. Explore the options below to get started:</p>
+            </div>
+            <div class="button-container">
+                <button id="about-lci" aria-label="Learn more about LCI Soda Ash">About LCI Soda Ash</button>
+                <button id="get-extension" aria-label="Access the internal telephone directory">Internal Telephone Directory</button>
+                <button id="google-maps" aria-label="Get navigation through the community">Navigate Through the Community</button>
+            </div>
+        </div>
+
+        <!-- Hidden form for the Internal Telephone Directory -->
+        <div id="directory-form" class="directory-form" style="display:none;" role="form" aria-labelledby="directory-form">
+            <form id="extension-form">
+                <label for="search-query">Enter Manager's Name or Plant Area:</label>
+                <input type="text" id="search-query" name="search-query" required aria-required="true" aria-label="Search for a manager's name or plant area">
+                <button type="submit" aria-label="Submit to get the extension">Get Extension</button>
+            </form>
+            <div id="extension-result" tabindex="0" aria-live="polite"></div>
+        </div>
+
+        <!-- Hidden chatbot-like input area for "About LCI" -->
+        <div id="chatbot-area" class="chatbot-area" style="display:none;" aria-live="polite">
+            <div id="chatbox" class="chatbox" role="log" aria-live="polite">
+                <div id="chat-content" tabindex="0"></div>
+            </div>
+            <form id="chat-form">
+                <input type="text" id="user-input" placeholder="Ask about LCI..." required aria-required="true" aria-label="Type your question about LCI">
+                <button type="submit" aria-label="Send your question">Send</button>
+            </form>
+        </div>
+
+        <!-- Hidden form for navigation through the community -->
+        <div id="navigation-form" class="navigation-form" style="display:none;" role="form" aria-labelledby="navigation-form">
+            <form id="navigate-form">
+                <label for="destination">Enter Destination:</label>
+                <input type="text" id="destination" name="destination" required aria-required="true" aria-label="Enter the destination you want to navigate to">
+                <button type="submit" aria-label="Submit to get navigation directions">Get Directions</button>
+            </form>
+        </div>
+
+    </main>
+
+    <footer role="contentinfo">
+        &copy; 2024 Urooj Akmal. All rights reserved.
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuButton = document.querySelector('.menu-button');
+            const dropdownContent = document.querySelector('.dropdown-content');
+        
+            menuButton.addEventListener('click', function() {
+                dropdownContent.classList.toggle('show');
+            });
+        
+            document.addEventListener('click', function(event) {
+                if (!menuButton.contains(event.target) && !dropdownContent.contains(event.target)) {
+                    dropdownContent.classList.remove('show');
+                }
+            });
+        });
+        
+
+
+        document.getElementById('about-lci').addEventListener('click', () => showSection('chatbot-area'));
+        document.getElementById('get-extension').addEventListener('click', () => showSection('directory-form'));
+        document.getElementById('google-maps').addEventListener('click', () => showSection('navigation-form'));
+        document.getElementById('back-button').addEventListener('click', resetHomeView);
+    
+        document.getElementById('chat-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const userInput = document.getElementById('user-input').value.trim();
+            if (userInput) {
+                addUserMessage(userInput);
+                await getBotReply(userInput);
+                document.getElementById('user-input').value = '';
+            }
+        });
+    
+        document.getElementById('extension-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const query = document.getElementById('search-query').value.trim();
+            if (query) {
+                await getExtension(query);
+                document.getElementById('search-query').value = '';
+            }
+        });
+    
+        document.getElementById('navigate-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const destination = document.getElementById('destination').value.trim();
+            if (destination) {
+                showMap(destination);
+                document.getElementById('destination').value = '';
+            }
+        });
+    
+        function showSection(sectionId) {
+            document.getElementById('home-view').style.display = 'none';
+            document.getElementById('chatbot-area').style.display = 'none';
+            document.getElementById('directory-form').style.display = 'none';
+            document.getElementById('navigation-form').style.display = 'none';
+    
+            document.getElementById(sectionId).style.display = 'block';
+            
+            // Show the welcome message in the chat area if it is being displayed
+            if (sectionId === 'chatbot-area') {
+                showWelcomeMessage();
+            }
+        }
+    
+        function resetHomeView() {
+            document.getElementById('home-view').style.display = 'block';
+            document.getElementById('chatbot-area').style.display = 'none';
+            document.getElementById('directory-form').style.display = 'none';
+            document.getElementById('navigation-form').style.display = 'none';
+    
+            // Clear chat content
+            document.getElementById('chat-content').innerHTML = '';
+    
+            // Clear extension result
+            const extensionResult = document.getElementById('extension-result');
+            extensionResult.textContent = '';
+            extensionResult.className = '';
+    
+            // Optionally, you can reset other forms or elements if needed
+            document.getElementById('user-input').value = '';
+            document.getElementById('search-query').value = '';
+            document.getElementById('destination').value = '';
+        }
+    
+        function addUserMessage(message) {
+            const chatContent = document.getElementById('chat-content');
+            chatContent.innerHTML += `<div class="message user-message"><img src="{{ url_for('static', filename='user.png') }}" alt="User" class="message-image">${message}</div>`;
+            chatContent.scrollTop = chatContent.scrollHeight;
+        }
+    
+        function addBotReply(reply) {
+            const chatContent = document.getElementById('chat-content');
+            chatContent.innerHTML += `<div class="message bot-message"><img src="{{ url_for('static', filename='bot.png') }}" alt="Bot" class="message-image">${reply}</div>`;
+            chatContent.scrollTop = chatContent.scrollHeight;
+        }
+    
+        function showWelcomeMessage() {
+            const welcomeMessage = "Hi! I’m your friendly onboarding assistant, here to help you get settled. Feel free to ask me about our facilities, history, or anything else you need. Welcome aboard!";
+            addBotReply(welcomeMessage);
+        }
+    
+        async function getBotReply(message) {
+            try {
+                const response = await fetch('/get_reply', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message: message }),
+                });
+                const data = await response.json();
+                addBotReply(data.reply);
+            } catch (error) {
+                console.error('Error:', error);
+                addBotReply('Sorry, there was an error processing your request.');
+            }
+        }
+    
+        async function getExtension(query) {
+            try {
+                const response = await fetch('/get_extension', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ query: query }),
+                });
+                const data = await response.json();
+                const extensionResult = document.getElementById('extension-result');
+    
+                if (data.extension) {
+                    extensionResult.textContent = `${data.extension}`;
+                    extensionResult.className = 'success';
+                } else {
+                    extensionResult.textContent = 'Extension not found';
+                    extensionResult.className = 'error';
+                }
+    
+                extensionResult.focus();
+            } catch (error) {
+                console.error('Error:', error);
+                const extensionResult = document.getElementById('extension-result');
+                extensionResult.textContent = 'Sorry, there was an error retrieving the extension.';
+                extensionResult.className = 'error';
+                extensionResult.focus();
+            }
+        }
+    
+        function showMap(destination) {
+            const url = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destination)}`;
+            window.open(url, '_blank');
+        }
+    </script>
+    
+</body>
+</html>
+
