@@ -27,7 +27,7 @@ def main():
     
     # Clear the database if the --reset flag is provided
     if args.reset:
-        print("✨ Clearing Database")
+        print("Clearing Database")
         clear_database()
 
     # Load documents from the specified directory
@@ -107,12 +107,12 @@ def add_to_chroma(chunks: list[Document]):
 
     # Add new documents to the database
     if len(new_chunks):
-        print(f"👉 Adding new documents: {len(new_chunks)}")
+        print(f"Adding new documents: {len(new_chunks)}")
         new_chunk_ids = [chunk.metadata["id"] for chunk in new_chunks]
         db.add_documents(new_chunks, ids=new_chunk_ids)
         db.persist()
     else:
-        print("✅ No new documents to add")
+        print("No new documents to add")
 
 
 def calculate_chunk_ids(chunks):
