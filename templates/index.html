@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Chatbot for onboarding at Lucky Core Industries Soda Ash Business. Explore company details, internal directory, and community navigation.">
+    <meta name="description" content="Chatbot for onboarding at the Business. Explore company details, internal directory, and community navigation.">
     <title>Onboarding Chatbot</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
@@ -37,7 +37,7 @@
                 <p id="welcome-text" tabindex="0">We're thrilled to have you join our team. Explore the options below to get started:</p>
             </div>
             <div class="button-container">
-                <button id="about-lci" aria-label="Learn more about Buisness and Procedures">About Buisness</button>
+                <button id="about-lci" aria-label="Learn more about Business and Procedures">About Business</button>
                 <button id="get-extension" aria-label="Access the internal telephone directory">Internal Telephone Directory</button>
                 <button id="google-maps" aria-label="Get navigation through the community">Navigate Through the Community</button>
             </div>
@@ -53,13 +53,13 @@
             <div id="extension-result" tabindex="0" aria-live="polite"></div>
         </div>
 
-        <!-- Hidden chatbot-like input area for "About LCI" -->
+        <!-- Hidden chatbot-like input area for "About Business" -->
         <div id="chatbot-area" class="chatbot-area" style="display:none;" aria-live="polite">
             <div id="chatbox" class="chatbox" role="log" aria-live="polite">
                 <div id="chat-content" tabindex="0"></div>
             </div>
             <form id="chat-form">
-                <input type="text" id="user-input" placeholder="Ask about LCI..." required aria-required="true" aria-label="Type your question about LCI">
+                <input type="text" id="user-input" placeholder="Ask about the Buisness..." required aria-required="true" aria-label="Type your question about LCI">
                 <button type="submit" aria-label="Send your question">Send</button>
             </form>
         </div>
@@ -97,7 +97,7 @@
         
 
 
-        document.getElementById('about-lci').addEventListener('click', () => showSection('chatbot-area'));
+        document.getElementById('about-business').addEventListener('click', () => showSection('chatbot-area'));
         document.getElementById('get-extension').addEventListener('click', () => showSection('directory-form'));
         document.getElementById('google-maps').addEventListener('click', () => showSection('navigation-form'));
         document.getElementById('back-button').addEventListener('click', resetHomeView);
