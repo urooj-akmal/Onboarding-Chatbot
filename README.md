@@ -19,7 +19,7 @@ This guide walks you through setting up and running the onboarding chatbot utili
 
 **Prerequisites:**
 
-* **Python 3.12.4:** Ensure you have Python 3.7 or later installed. Check by running `python --version` in your terminal.
+* **Python 3.12.4:** Ensure you have Python 3.12 or later installed. Check by running `python --version` in your terminal.
 
 **1. Install Ollama:**
 
